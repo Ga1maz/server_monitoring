@@ -1,11 +1,10 @@
 import { execSync } from 'child_process'
+import { defineEventHandler } from 'h3'  // или из 'nuxt'
 
-function translateUptime(uptimeEn) {
-  // Убираем "up " в начале, если есть
+function translateUptime(uptimeEn: string): string {
   uptimeEn = uptimeEn.replace(/^up\s*/, '')
 
-  // Словарь перевода
-  const translations = {
+  const translations: Record<string, string> = {
     "day": "день",
     "days": "дня",
     "hour": "час",
@@ -16,16 +15,11 @@ function translateUptime(uptimeEn) {
     "seconds": "секунд"
   }
 
-  // Разбиваем по запятым и пробелам
   return uptimeEn.split(',').map(part => {
     part = part.trim()
-    // Разбиваем на число и слово
     const [num, ...rest] = part.split(' ')
     const wordEn = rest.join(' ')
-
-    // Переводим слово (в словаре - простое преобразование)
     const wordRu = translations[wordEn] || wordEn
-
     return `${num} ${wordRu}`
   }).join(', ')
 }
@@ -36,6 +30,11 @@ export default defineEventHandler(() => {
   const cpuRaw = execSync("mpstat -P ALL 1 1 | awk '/^[0-9]/ && $3 ~ /^[0-9]+$/ { print 100 - $12 }'").toString().trim().split('\n')
   const uptimeRaw = execSync("uptime -p").toString().trim()
 
+  const cpuLoadByCore: Record<string, string> = {}
+  cpuRaw.slice(0, 16).forEach((load, i) => {
+    cpuLoadByCore[`Ядро ${i + 1}`] = parseFloat(parseFloat(load).toFixed(1)) + '%'
+  })
+
   return {
     memory: {
       total: parseFloat((parseInt(memInfo[0]) / 1024).toFixed(1)),
@@ -45,7 +44,7 @@ export default defineEventHandler(() => {
       total: parseFloat((parseInt(diskInfo[0]) / 1024).toFixed(1)),
       used: parseFloat((parseInt(diskInfo[1]) / 1024).toFixed(1))
     },
-    threads: cpuRaw.slice(0, 16).map(v => parseFloat(parseFloat(v).toFixed(1))),
+    cpu: cpuLoadByCore,
     uptime: translateUptime(uptimeRaw)
   }
 })

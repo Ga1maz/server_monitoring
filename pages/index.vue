@@ -6,7 +6,7 @@
     <div class="flex justify-center mb-10">
       <div class="glass p-4 rounded-xl text-lg text-center w-full max-w-md">
         <span class="text-gray-300">Время работы</span>
-        <span class="text-green-400">{{ stats.uptime }}</span>
+         <span class="text-green-400">{{ stats.uptime }}</span>
       </div>
     </div>
 
@@ -66,14 +66,14 @@ import { ref, onMounted } from 'vue'
 interface Stats {
   memory: { used: number; total: number }
   disk: { used: number; total: number }
-  threads: number[]
+  cpu: Record<string, string> // объект: "Ядро 1": "12.3%"
   uptime: string
 }
 
 const stats = ref<Stats>({
   memory: { used: 0, total: 0 },
   disk: { used: 0, total: 0 },
-  threads: Array(16).fill(0),
+  cpu: {},
   uptime: ''
 })
 
@@ -88,7 +88,7 @@ const fetchStats = async () => {
 
 onMounted(() => {
   fetchStats()
-  setInterval(fetchStats, 1000) // Обновление каждую 1 секунду
+  setInterval(fetchStats, 1000)
 })
 
 const getBarColor = (val: number) => {

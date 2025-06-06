@@ -1,5 +1,13 @@
 <template>
   <div class="min-h-screen bg-cover bg-center text-white p-6 sm:p-10" style="background-image: url('/home-01-img-03.jpg')">
+    <!-- Лоадер -->
+    <div v-if="loading" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="glass p-8 rounded-xl flex flex-col items-center">
+        <div class="loader mb-4"></div>
+        <p class="text-lg">Загрузка данных...</p>
+      </div>
+    </div>
+
     <h1 class="text-5xl font-extrabold mb-8 text-center drop-shadow-lg">Мониторинг ноды: N-X1</h1>
 
     <!-- Аптайм -->
@@ -78,13 +86,17 @@ const stats = ref<Stats>({
   uptime: ''
 })
 
+const loading = ref(true)
+
 const fetchStats = async () => {
   try {
     const res = await $fetch<Stats>('/api/stats')
     stats.value = res
+    loading.value = false
     console.log('CPU loads:', stats.value.cpu)  // для отладки
   } catch (err) {
     console.error('Ошибка получения данных:', err)
+    loading.value = false
   }
 }
 
@@ -107,5 +119,19 @@ const getBarColor = (val: number) => {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.loader {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #fff;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

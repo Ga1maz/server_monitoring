@@ -28,7 +28,7 @@ export default defineEventHandler(() => {
   const memInfo = execSync("free -m | awk '/Mem:/ { print $2, $3 }'").toString().trim().split(' ')
   const diskInfo = execSync("df -BM --output=size,used / | tail -1").toString().trim().split(/\s+/)
   const cpuRaw = execSync(
-  `mpstat -P ALL 1 1 | awk 'NR>3 && $3 ~ /^[0-9]+$/ { gsub(",",".",$12); print 100 - $12 }'`
+  `mpstat -P ALL 1 1 | awk 'NR>3 { gsub(",",".",$12); print 100 - $12 }'`
 )
   .toString()
   .trim()

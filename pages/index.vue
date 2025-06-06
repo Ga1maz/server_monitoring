@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-cover bg-center text-white p-6 sm:p-10" style="background-image: url('/home-01-img-03.jpg')">
-    <h1 class="text-5xl font-extrabold mb-8 text-center drop-shadow-lg">🖥️ Мониторинг Сервера</h1>
+    <h1 class="text-5xl font-extrabold mb-8 text-center drop-shadow-lg">Мониторинг ноды: N-X1</h1>
 
     <!-- Аптайм -->
     <div class="flex justify-center mb-10">

@@ -27,7 +27,14 @@ function translateUptime(uptimeEn: string): string {
 export default defineEventHandler(() => {
   const memInfo = execSync("free -m | awk '/Mem:/ { print $2, $3 }'").toString().trim().split(' ')
   const diskInfo = execSync("df -BM --output=size,used / | tail -1").toString().trim().split(/\s+/)
-  const cpuRaw = execSync("mpstat -P ALL 1 1 | awk '/^[0-9]/ && $3 ~ /^[0-9]+$/ { print 100 - $12 }'").toString().trim().split('\n')
+  const cpuRaw = execSync(
+  `mpstat -P ALL 1 1 | awk 'NR>3 && $3 ~ /^[0-9]+$/ { gsub(",",".",$12); print 100 - $12 }'`
+)
+  .toString()
+  .trim()
+  .split('\n');
+
+
   const uptimeRaw = execSync("uptime -p").toString().trim()
 
   const cpuLoadByCore: Record<string, string> = {}

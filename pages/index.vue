@@ -5,7 +5,7 @@
     <!-- Аптайм -->
     <div class="flex justify-center mb-10">
       <div class="glass p-4 rounded-xl text-lg text-center w-full max-w-md">
-        <span class="text-gray-300">Время работы</span>
+        <span class="text-gray-300">Время работы </span>
          <span class="text-green-400">{{ stats.uptime }}</span>
       </div>
     </div>

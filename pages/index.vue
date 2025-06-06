@@ -43,7 +43,7 @@
     <h2 class="text-2xl font-bold mb-4 text-center">Ядра процессора</h2>
     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
       <div
-        v-for="(thread, i) in stats.threads"
+        v-for="(load, core) in stats.cpu"
         :key="i"
         class="glass p-4 rounded-lg text-center"
       >

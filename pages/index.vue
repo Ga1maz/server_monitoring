@@ -6,7 +6,7 @@
     <div class="flex justify-center mb-10">
       <div class="glass p-4 rounded-xl text-lg text-center w-full max-w-md">
         <span class="text-gray-300">Время работы </span>
-         <span class="text-green-400">{{ stats.uptime }}</span>
+        <span class="text-green-400">{{ stats.uptime }}</span>
       </div>
     </div>
 
@@ -44,29 +44,30 @@
     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
       <div
         v-for="(load, core) in stats.cpu"
-        :key="i"
+        :key="core"
         class="glass p-4 rounded-lg text-center"
       >
-        <h3 class="text-sm text-gray-300 font-semibold">Ядро {{ i + 1 }}</h3>
-        <p class="text-white font-bold mb-2">{{ thread }}%</p>
+        <h3 class="text-sm text-gray-300 font-semibold">{{ core }}</h3>
+        <p class="text-white font-bold mb-2">{{ load }}</p>
         <div class="w-full h-2 bg-gray-700 rounded">
           <div
             class="h-2 rounded transition-all duration-500"
-            :class="getBarColor(thread)"
-            :style="{ width: thread + '%' }"
+            :class="getBarColor(parseFloat(load) || 0)"
+            :style="{ width: (parseFloat(load) || 0) + '%' }"
           ></div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
 interface Stats {
   memory: { used: number; total: number }
   disk: { used: number; total: number }
-  cpu: Record<string, string> // объект: "Ядро 1": "12.3%"
+  cpu: Record<string, string>  // например { "Ядро 1": "1.1%" }
   uptime: string
 }
 
@@ -81,6 +82,7 @@ const fetchStats = async () => {
   try {
     const res = await $fetch<Stats>('/api/stats')
     stats.value = res
+    console.log('CPU loads:', stats.value.cpu)  // для отладки
   } catch (err) {
     console.error('Ошибка получения данных:', err)
   }
@@ -97,6 +99,7 @@ const getBarColor = (val: number) => {
   return 'bg-red-500'
 }
 </script>
+
 <style scoped>
 .glass {
   background-color: rgba(255, 255, 255, 0.05);
